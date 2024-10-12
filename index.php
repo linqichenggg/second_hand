@@ -49,6 +49,7 @@ $result = $conn->query($sql);
             <li><a href="my_items.php">我的物品</a></li>
             <li><a href="sell_item.php">发布物品</a></li>
             <li><a href="profile.php">个人中心</a></li>
+            <li><a href="inbox.php">收件箱</a></li>
             <li><a href="logout.php">退出/切换帐号</a></li>
             <li><a href="cart.php"><img src="cart.png" alt="购物车" class="cart-icon"></a></li>
         </ul>

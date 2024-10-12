@@ -29,7 +29,7 @@ if ($conn->connect_error) {
 }
 
 // 获取用户作为买家的订单
-$buyer_orders_sql = "SELECT orders.order_id, orders.order_date, orders.total_price, orders.status, items.title, sellers.username AS seller_username, shuttle_trips.route_id, shuttle_trips.departure_time
+$buyer_orders_sql = "SELECT orders.order_id, orders.seller_id, orders.buyer_id, orders.order_date, orders.total_price, orders.status, items.title, sellers.username AS seller_username, shuttle_trips.route_id, shuttle_trips.departure_time
                     FROM orders
                     JOIN items ON orders.item_id = items.item_id
                     JOIN users AS sellers ON orders.seller_id = sellers.user_id
@@ -42,7 +42,7 @@ $buyer_stmt->execute();
 $buyer_orders_result = $buyer_stmt->get_result();
 
 // 获取用户作为卖家的订单
-$seller_orders_sql = "SELECT orders.order_id, orders.order_date, orders.total_price, orders.status, items.title, buyers.username AS buyer_username
+$seller_orders_sql = "SELECT orders.order_id, orders.seller_id, orders.buyer_id, orders.order_date, orders.total_price, orders.status, items.title, buyers.username AS buyer_username
                     FROM orders
                     JOIN items ON orders.item_id = items.item_id
                     JOIN users AS buyers ON orders.buyer_id = buyers.user_id
@@ -166,6 +166,11 @@ $conn->close();
                             <input type="hidden" name="order_id" value="<?php echo htmlspecialchars($row['order_id']); ?>">
                             <button type="submit" name="confirm_delivery" class="confirm-delivery-button">确认收货</button>
                         </form>
+                        <form action="send_message.php" method="post" style="display:inline;">
+                            <input type="hidden" name="order_id" value="<?php echo htmlspecialchars($row['order_id']); ?>">
+                            <input type="hidden" name="receiver_id" value="<?php echo ($user_id === $row['seller_id']) ? $row['buyer_id'] : $row['seller_id']; ?>">
+                            <button type="submit" class="message-button">留言</button>
+                        </form>
                     <?php endif; ?>
                 </div>
             <?php endwhile; ?>
@@ -184,21 +189,26 @@ $conn->close();
                     <p>状态：<?php echo htmlspecialchars($row['status']); ?></p>
                     <?php if ($row['status'] !== 'delivered'): ?>
                         <form action="orders.php" method="post" style="display:inline;">
-                        <input type="hidden" name="order_id" value="<?php echo htmlspecialchars($row['order_id']); ?>">
-                        <label for="shuttle_trip_id">选择班车运输：</label>
-                        <select id="shuttle_trip_id" name="shuttle_trip_id" required>
-                            <?php foreach ($shuttles as $shuttle): ?>
-                                <option value="<?php echo htmlspecialchars($shuttle['trip_id']); ?>">
-                                    <?php echo htmlspecialchars($shuttle['route_id']) . " - 出发时间: " . htmlspecialchars($shuttle['departure_time']); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                        <button type="submit" name="assign_shuttle">分配班车</button>
+                            <input type="hidden" name="order_id" value="<?php echo htmlspecialchars($row['order_id']); ?>">
+                            <label for="shuttle_trip_id">选择班车运输：</label>
+                            <select id="shuttle_trip_id" name="shuttle_trip_id" required>
+                                <?php foreach ($shuttles as $shuttle): ?>
+                                    <option value="<?php echo htmlspecialchars($shuttle['trip_id']); ?>">
+                                        <?php echo htmlspecialchars($shuttle['route_id']) . " - 出发时间: " . htmlspecialchars($shuttle['departure_time']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <button type="submit" name="assign_shuttle">分配班车</button>
                         </form>
                     <?php endif; ?>
                     <form action="orders.php" method="post" style="display:inline;">
                         <input type="hidden" name="delete_order_id" value="<?php echo htmlspecialchars($row['order_id']); ?>">
                         <button type="submit" name="delete_order" class="delete-button" onclick="return confirm('确定要删除此订单吗？');">删除订单</button>
+                    </form>
+                    <form action="send_message.php" method="post" style="display:inline;">
+                        <input type="hidden" name="order_id" value="<?php echo htmlspecialchars($row['order_id']); ?>">
+                        <input type="hidden" name="receiver_id" value="<?php echo isset($row['seller_id']) ? ($user_id === $row['seller_id'] ? $row['buyer_id'] : $row['seller_id']) : ''; ?>">
+                        <button type="submit" class="message-button">留言</button>
                     </form>
                 </div>
             <?php endwhile; ?>
