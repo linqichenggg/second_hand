@@ -37,10 +37,22 @@ if (isset($_GET['item_id'])) {
         echo "<script>alert('物品不存在'); window.location.href='index.php';</script>";
         exit();
     }
+
+    // 获取卖家的评分
+    $seller_id = $item['user_id'];
+    $score_sql = "SELECT total_score FROM users WHERE user_id = ?";
+    $score_stmt = $conn->prepare($score_sql);
+    $score_stmt->bind_param("i", $seller_id);
+    $score_stmt->execute();
+    $score_result = $score_stmt->get_result();
+    $seller_score = $score_result->fetch_assoc()['total_score'] ?? 0; // 如果没有评分，默认为0
+
 } else {
     echo "<script>alert('无效的物品ID'); window.location.href='index.php';</script>";
     exit();
 }
+
+
 
 // 处理添加到购物车请求
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['add_to_cart'])) {
@@ -74,10 +86,28 @@ $conn->close();
     <title>物品详情 - 小农二手交易系统</title>
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
+    <style>
+        .seller-score {
+            position: absolute;
+            top: 30px;
+            right: 320px;
+            background-color: #000;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            color:white
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>物品详情</h1>
+
+        <div class="seller-score">
+            卖家评分：<?php echo htmlspecialchars($seller_score); ?>
+        </div>
+
         <div class="item-details">
             <img src="<?php echo !empty($item['image_url']) ? htmlspecialchars($item['image_url']) : 'no_image.png'; ?>" alt="<?php echo htmlspecialchars($item['title']); ?>">
             <div class="item-info">

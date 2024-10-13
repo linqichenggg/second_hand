@@ -115,6 +115,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['confirm_delivery'])) {
     }
 }
 
+// 处理评价请求
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['rate_order'])) {
+    $order_id = $_POST['order_id'];
+    $rating = $_POST['rating'];
+    $rated_user_id = $_POST['rated_user_id'];
+
+    // 插入评价记录
+    $rate_sql = "INSERT INTO ratings (order_id, rated_user_id, rating) VALUES (?, ?, ?)";
+    $rate_stmt = $conn->prepare($rate_sql);
+    if ($rate_stmt) {
+        $rate_stmt->bind_param("iii", $order_id, $rated_user_id, $rating);
+        if ($rate_stmt->execute()) {
+            // 更新用户的总分
+            $update_score_sql = "UPDATE users SET total_score = total_score + ? WHERE user_id = ?";
+            $update_score_stmt = $conn->prepare($update_score_sql);
+            $score_change = ($rating == 1) ? 1 : -1;
+            $update_score_stmt->bind_param("ii", $score_change, $rated_user_id);
+            if ($update_score_stmt->execute()) {
+                echo "<script>alert('评价成功'); window.location.href='orders.php';</script>";
+            } else {
+                echo "<script>alert('更新评分时出错: " . $update_score_stmt->error . "'); window.location.href='orders.php';</script>";
+            }
+        } else {
+            echo "<script>alert('评价时出错: " . $rate_stmt->error . "'); window.location.href='orders.php';</script>";
+        }
+    } else {
+        echo "<script>alert('准备评价时出错: " . $conn->error . "'); window.location.href='orders.php';</script>";
+    }
+}
+
 
 $conn->close();
 ?>
@@ -166,12 +196,19 @@ $conn->close();
                             <input type="hidden" name="order_id" value="<?php echo htmlspecialchars($row['order_id']); ?>">
                             <button type="submit" name="confirm_delivery" class="confirm-delivery-button">确认收货</button>
                         </form>
-                        <form action="send_message.php" method="post" style="display:inline;">
+                    <?php endif; ?>
+                    <?php if ($row['status'] === 'delivered'): ?>
+                        <form action="rate_order.php" method="post" style="display:inline;">
+                            <input type="hidden" name="order_id" value="<?php echo htmlspecialchars($row['order_id']); ?>">
+                            <input type="hidden" name="rated_user_id" value="<?php echo htmlspecialchars($row['seller_id']); ?>">
+                            <button type="submit" class="rate-button">评价卖家</button>
+                        </form>
+                    <?php endif; ?>
+                    <form action="send_message.php" method="post" style="display:inline;">
                             <input type="hidden" name="order_id" value="<?php echo htmlspecialchars($row['order_id']); ?>">
                             <input type="hidden" name="receiver_id" value="<?php echo ($user_id === $row['seller_id']) ? $row['buyer_id'] : $row['seller_id']; ?>">
                             <button type="submit" class="message-button">留言</button>
-                        </form>
-                    <?php endif; ?>
+                    </form>
                 </div>
             <?php endwhile; ?>
         <?php else: ?>
@@ -199,6 +236,13 @@ $conn->close();
                                 <?php endforeach; ?>
                             </select>
                             <button type="submit" name="assign_shuttle">分配班车</button>
+                        </form>
+                    <?php endif; ?>
+                    <?php if ($row['status'] === 'delivered'): ?>
+                        <form action="rate_order.php" method="post" style="display:inline;">
+                            <input type="hidden" name="order_id" value="<?php echo htmlspecialchars($row['order_id']); ?>">
+                            <input type="hidden" name="rated_user_id" value="<?php echo htmlspecialchars($row['buyer_id']); ?>">
+                            <button type="submit" class="rate-button">评价买家</button>
                         </form>
                     <?php endif; ?>
                     <form action="orders.php" method="post" style="display:inline;">
