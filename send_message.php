@@ -78,6 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['send_message'])) {
                 <textarea id="content" name="content" rows="5" required></textarea>
             </div>
             <button type="submit" name="send_message">发送留言</button>
+            <button onclick="window.location.href='orders.php';" style="margin-top: 20px;">返回订单页面</button>
         </form>
     </div>
 </body>
