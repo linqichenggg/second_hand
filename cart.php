@@ -1,34 +1,9 @@
 <?php
-session_start();
+// 引入认证文件
+require_once 'auth.php';
 
-// 启用错误报告
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-// 检查用户是否已登录
-if (!isset($_SESSION['user_id'])) {
-    echo "<script>alert('请先登录'); window.location.href='login.php';</script>";
-    exit();
-}
-
-// 获取用户信息
-$user_id = $_SESSION['user_id'];
-
-// 数据库连接信息
-$servername = "localhost";
-$db_username = "root";
-$db_password = "";
-$dbname = "1";
-
-// 创建数据库连接
-$conn = new mysqli($servername, $db_username, $db_password, $dbname);
-
-// 检查连接
-if ($conn->connect_error) {
-    error_log("连接失败: " . $conn->connect_error);
-    die("数据库连接失败，请稍后重试。");
-}
+// 引入数据库连接文件
+require_once 'db_connect.php';
 
 // 获取购物车中的物品
 $sql = "SELECT cart_items.cart_item_id, items.item_id, items.title, items.price, items.image_url, items.user_id AS seller_id, cart_items.quantity FROM cart_items JOIN items ON cart_items.item_id = items.item_id WHERE cart_items.user_id = ?";

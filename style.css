@@ -202,3 +202,18 @@ input[type="text"], input[type="password"] {
     padding: 8px;
     box-sizing: border-box;
 }
+
+/* 确保上传的图片在商品详情页和列表页显示正常 */
+.item-card img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.item-details img {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+}

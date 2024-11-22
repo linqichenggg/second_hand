@@ -1,28 +1,12 @@
 <?php
-session_start();
+// 引入认证文件
+require_once 'auth.php';
 
-// 检查用户是否已登录
-if (!isset($_SESSION['user_id'])) {
-    echo "<script>alert('请先登录'); window.location.href='login.php';</script>";
-    exit();
-}
+// 引入数据库连接文件
+require_once 'db_connect.php';
 
 // 获取用户信息
 $user_id = $_SESSION['user_id'];
-
-// 数据库连接信息
-$servername = "localhost";
-$db_username = "root";
-$db_password = "";
-$dbname = "1";
-
-// 创建数据库连接
-$conn = new mysqli($servername, $db_username, $db_password, $dbname);
-
-// 检查连接
-if ($conn->connect_error) {
-    die("连接失败: " . $conn->connect_error);
-}
 
 // 处理删除物品请求
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_item_id'])) {

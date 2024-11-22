@@ -1,32 +1,12 @@
 <?php
-session_start();
+// 引入认证文件
+require_once 'auth.php';
 
-// 启用错误报告
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-// 检查用户是否已登录
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php'); exit();
-}
+// 引入数据库连接文件
+require_once 'db_connect.php';
 
 // 获取用户信息
 $user_id = $_SESSION['user_id'];
-
-// 数据库连接信息
-$servername = "localhost";
-$db_username = "root";
-$db_password = "";
-$dbname = "1";
-
-// 创建数据库连接
-$conn = new mysqli($servername, $db_username, $db_password, $dbname);
-
-// 检查连接
-if ($conn->connect_error) {
-    die("连接失败: " . $conn->connect_error);
-}
 
 // 处理评价请求
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['rating'])) {
