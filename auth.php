@@ -29,8 +29,10 @@ if (!isset($_SESSION['initiated'])) {
     $_SESSION['initiated'] = true;
 }
 
-// 检查用户是否已登录
-if (!isset($_SESSION['user_id'])) {
+if (isset($_SESSION['user_id'])) {
+    $user_id = $_SESSION['user_id'];  // 从会话中获取用户ID
+} else {
+    // 如果没有登录，跳转到登录页或其他页面
     echo "<script>alert('请先登录'); window.location.href='login.php';</script>";
     exit();
 }

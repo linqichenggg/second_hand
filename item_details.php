@@ -93,7 +93,7 @@ $conn->close();
         </div>
 
         <div class="item-details">
-            <img src="<?php echo !empty($item['image_url']) ? htmlspecialchars($item['image_url']) : 'no_image.png'; ?>" alt="<?php echo htmlspecialchars($item['title']); ?>">
+            <img src="uploads/no_image.png" alt="no_image" style="width: 150px; height: auto;">
             <div class="item-info">
                 <h2><?php echo htmlspecialchars($item['title']); ?></h2>
                 <p>价格：¥<?php echo htmlspecialchars($item['price']); ?></p>

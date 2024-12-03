@@ -7,9 +7,34 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // 引入认证文件和数据库连接
-require_once 'auth.php';
 require_once 'db_connect.php';
 
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+// 启用错误报告（开发环境下启用，生产环境应禁用）
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// 会话超时设置（例如 30 分钟）
+$timeout_duration = 1800;
+
+// 检查会话最后活动时间
+if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY']) > $timeout_duration) {
+    session_unset();
+    session_destroy();
+    echo "<script>alert('会话已过期，请重新登录'); window.location.href='login.php';</script>";
+    exit();
+}
+$_SESSION['LAST_ACTIVITY'] = time();
+
+// 防止会话固定攻击
+if (!isset($_SESSION['initiated'])) {
+    session_regenerate_id(true);
+    $_SESSION['initiated'] = true;
+}
 
 // 生成CSRF令牌（如果尚未生成）
 if (empty($_SESSION['csrf_token'])) {

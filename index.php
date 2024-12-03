@@ -21,7 +21,7 @@ $result = $conn->query($sql);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>首页 - 小农二手交易系统</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
+    <!-- <script src="script.js" defer></script> -->
 </head>
 <body>
     <header>
@@ -47,8 +47,7 @@ $result = $conn->query($sql);
             <?php if ($result->num_rows > 0): ?>
                 <?php while ($row = $result->fetch_assoc()): ?>
                     <div class="item-card">
-                        <img src="<?php echo !empty($row['image_url']) ? htmlspecialchars($row['image_url']) : 'no_image.png'; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>">
-                        <h3><?php echo htmlspecialchars($row['title']); ?></h3>
+                        <img src="uploads/no_image.png" alt="no_image" style="width: 150px; height: auto;">
                         <p>价格：<?php echo htmlspecialchars($row['price']); ?></p>
                         <a href="item_details.php?item_id=<?php echo htmlspecialchars($row['item_id']); ?>" class="btn">查看详情</a>
                     </div>

@@ -16,7 +16,14 @@ $buyer_orders_sql = "SELECT orders.order_id, orders.seller_id, orders.buyer_id, 
                     LEFT JOIN shuttle_trips ON orders.shuttle_trip_id = shuttle_trips.trip_id
                     WHERE orders.buyer_id = ?
                     ORDER BY orders.order_date DESC";
+
+// 检查 SQL 是否准备成功
 $buyer_stmt = $conn->prepare($buyer_orders_sql);
+if (!$buyer_stmt) {
+    echo "SQL Prepare Error: " . $conn->error;
+    exit();  // 终止脚本执行
+}
+
 $buyer_stmt->bind_param("i", $user_id);
 $buyer_stmt->execute();
 $buyer_orders_result = $buyer_stmt->get_result();
@@ -28,7 +35,14 @@ $seller_orders_sql = "SELECT orders.order_id, orders.seller_id, orders.buyer_id,
                     JOIN users AS buyers ON orders.buyer_id = buyers.user_id
                     WHERE items.user_id = ?
                     ORDER BY orders.order_date DESC";
+
+// 检查 SQL 是否准备成功
 $seller_stmt = $conn->prepare($seller_orders_sql);
+if (!$seller_stmt) {
+    echo "SQL Prepare Error: " . $conn->error;
+    exit();  // 终止脚本执行
+}
+
 $seller_stmt->bind_param("i", $user_id);
 $seller_stmt->execute();
 $seller_orders_result = $seller_stmt->get_result();
@@ -136,7 +150,6 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的订单 - 小农二手交易系统</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
 </head>
 <body>
     <div class="container">

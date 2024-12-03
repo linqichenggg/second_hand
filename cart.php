@@ -136,7 +136,9 @@ $conn->close();
         <?php if ($result->num_rows > 0): ?>
             <?php while ($row = $result->fetch_assoc()): ?>
                 <div class="cart-item">
-                    <img src="<?php echo !empty($row['image_url']) ? htmlspecialchars($row['image_url']) : 'no_image.png'; ?>" alt="<?php echo htmlspecialchars($row['title']); ?>">
+                    <?php 
+                        echo !empty($row['image_url']) ? '<img src="' . htmlspecialchars($row['image_url']) . '" alt="Image" style="width: 150px; height: auto;">' : '<img src="uploads/no_image.png" alt="no_image" style="width: 150px; height: auto;">';
+                    ?>
                     <div class="cart-item-info">
                         <h3><?php echo htmlspecialchars($row['title']); ?></h3>
                         <p>价格：<?php echo htmlspecialchars($row['price']); ?> 元</p>

@@ -55,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // 生成唯一文件名，防止文件名冲突
         $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
         $new_file_name = uniqid('img_', true) . '.' . $file_ext;
-        $target_file = $upload_dir . $new_file_name;
+        $target_file = 'uploads/' . $new_file_name;
 
         // 移动上传文件到目标目录
         if (move_uploaded_file($file_tmp, $target_file)) {
