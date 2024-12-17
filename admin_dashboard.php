@@ -175,6 +175,38 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
         </div>
         
         <!-- 其他管理功能可以在此添加 -->
+         <!-- 订单管理 -->
+        <div class="section">
+            <h2>订单管理</h2>
+            <?php
+            // 查询所有订单
+            $stmt = $conn->prepare("SELECT order_id, buyer_id, item_id, order_date, status FROM orders");
+            $stmt->execute();
+            $result = $stmt->get_result();
+            ?>
+            <table>
+                <tr>
+                    <th>订单ID</th>
+                    <th>买家ID</th>
+                    <th>商品ID</th>
+                    <th>订单日期</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                <?php while ($order = $result->fetch_assoc()): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($order['order_id']); ?></td>
+                    <td><?php echo htmlspecialchars($order['buyer_id']); ?></td>
+                    <td><?php echo htmlspecialchars($order['item_id']); ?></td>
+                    <td><?php echo htmlspecialchars($order['order_date']); ?></td>
+                    <td><?php echo htmlspecialchars($order['status']); ?></td>
+                    <td class="action-buttons">
+                        <a href="delete_order.php?order_id=<?php echo $order['order_id']; ?>"><button>删除订单</button></a>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
+            </table>
+        </div>
     </div>
 </body>
 </html>
