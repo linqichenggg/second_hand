@@ -157,16 +157,26 @@ $conn->close();
 
         <div class="shuttle-info">
             <h3>可用班车信息：</h3>
-            <?php if (!empty($shuttles)): ?>
-                <ul>
-                    <?php foreach ($shuttles as $shuttle): ?>
-                        <li><?php echo htmlspecialchars($shuttle['route_id']) . " - 出发时间: " . htmlspecialchars($shuttle['departure_time']) . " - 出发地: " . htmlspecialchars($shuttle['departure_campus']) . " - 到达地: " . htmlspecialchars($shuttle['arrive_campus']);?></li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php else: ?>
-                <p>目前没有可用的班车。</p>
-            <?php endif; ?>
+            <button class="toggle-btn" onclick="toggleShuttles()">显示/隐藏班车信息</button>
+            <div id="shuttle-list" style="display:none;">
+                <?php if (!empty($shuttles)): ?>
+                    <ul>
+                        <?php foreach ($shuttles as $shuttle): ?>
+                            <li><?php echo htmlspecialchars($shuttle['route_id']) . " - 出发时间: " . htmlspecialchars($shuttle['departure_time']) . " - 出发地: " . htmlspecialchars($shuttle['departure_campus']) . " - 到达地: " . htmlspecialchars($shuttle['arrive_campus']); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php else: ?>
+                    <p>目前没有可用的班车。</p>
+                <?php endif; ?>
+            </div>
         </div>
+
+        <script>
+            function toggleShuttles() {
+                var shuttleList = document.getElementById('shuttle-list');
+                shuttleList.style.display = (shuttleList.style.display === 'none' || shuttleList.style.display === '') ? 'block' : 'none';
+            }
+        </script>
         
         <h2>您购买的订单</h2>
         <?php if ($buyer_orders_result->num_rows > 0): ?>
