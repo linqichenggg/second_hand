@@ -1,13 +1,11 @@
 <?php
-
+// 启用错误报告用于调试
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// 引入认证文件
+// 引入认证文件和数据库连接
 require_once 'auth.php';
-
-// 引入数据库连接文件
 require_once 'db_connect.php';
 
 // 处理发布物品请求
@@ -16,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $title = trim($_POST['title']);
     $description = trim($_POST['description']);
     $price = trim($_POST['price']);
-    $category = trim($_POST['category']);
+    $category = trim($_POST['category']);  // 获取用户选择的类别
     $item_condition = trim($_POST['item_condition']);
 
     // 初始化$image_url
@@ -90,6 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 $conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -166,7 +165,14 @@ $conn->close();
             </div>
             <div class="form-group">
                 <label for="category">类别：</label>
-                <input type="text" id="category" name="category">
+                <select id="category" name="category" required>
+                    <option value="电子产品">电子产品</option>
+                    <option value="家居用品">家居用品</option>
+                    <option value="书籍">书籍</option>
+                    <option value="运动器材">运动器材</option>
+                    <option value="衣物鞋包">衣物鞋包</option>
+                    <option value="其他">其他</option>
+                </select>
             </div>
             <div class="form-group">
                 <label for="item_condition">物品成色：</label>
