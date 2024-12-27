@@ -97,6 +97,13 @@ $conn->close();
         button:hover {
             background-color: #45a049;
         }
+        .back-button {
+            background-color: #2196F3;
+            margin-top: 10px;
+        }
+        .back-button:hover {
+            background-color: #1976D2;
+        }
     </style>
 </head>
 <body>
@@ -105,6 +112,9 @@ $conn->close();
         <a href="my_items.php">我的物品</a>
         <a href="sell_item.php">发布物品</a>
         <a href="profile.php">个人中心</a>
+        <a href="inbox.php">收件箱</a>
+        <a href="logout.php">退出/切换帐号</a>
+        <a href="cart.php"><img src="cart.png" alt="购物车" class="cart-icon"></a>
     </div>
 
     <div class="container">
