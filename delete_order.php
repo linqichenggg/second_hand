@@ -10,7 +10,10 @@ error_reporting(E_ALL);
 require_once 'auth.php';
 require_once 'db_connect.php';
 
-session_start();
+// 确保 session 已经开始，避免重复调用 session_start()
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 // 检查用户是否为管理员
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
@@ -22,28 +25,29 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 if (isset($_GET['order_id'])) {
     $order_id = intval($_GET['order_id']);
 
-    // 检查订单是否存在
-    $stmt = $conn->prepare("SELECT * FROM orders WHERE order_id = ?");
-    $stmt->bind_param("i", $order_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $order = $result->fetch_assoc();
+    // 开始事务
+    $conn->begin_transaction();
+    
+    try {
+        // 删除与订单相关的留言记录
+        $stmt = $conn->prepare("DELETE FROM inbox_messages WHERE order_id = ?");
+        $stmt->bind_param("i", $order_id);
+        $stmt->execute();
 
-    if ($order) {
         // 删除订单记录
         $stmt = $conn->prepare("DELETE FROM orders WHERE order_id = ?");
         $stmt->bind_param("i", $order_id);
+        $stmt->execute();
 
-        if ($stmt->execute()) {
-            echo "<script>alert('订单已删除'); window.location.href='admin_dashboard.php';</script>";
-        } else {
-            echo "<script>alert('删除失败: " . $stmt->error . "'); window.location.href='admin_dashboard.php';</script>";
-        }
-    } else {
-        echo "<script>alert('订单不存在'); window.location.href='admin_dashboard.php';</script>";
+        // 提交事务
+        $conn->commit();
+        
+        echo "<script>alert('订单及相关留言已删除'); window.location.href='admin_dashboard.php';</script>";
+    } catch (Exception $e) {
+        // 出错时回滚事务
+        $conn->rollback();
+        echo "<script>alert('删除失败: " . $e->getMessage() . "'); window.location.href='admin_dashboard.php';</script>";
     }
-
-    $stmt->close();
 } else {
     echo "<script>alert('无效的请求'); window.location.href='admin_dashboard.php';</script>";
 }

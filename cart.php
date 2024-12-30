@@ -18,17 +18,20 @@ $result = $stmt->get_result();
 
 // 处理删除购物车物品请求
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_cart_item_id'])) {
-    $delete_cart_item_id = $_POST['delete_cart_item_id'];
+    $cart_item_id = $_POST['delete_cart_item_id'];
+    $user_id = $_SESSION['user_id'];
+
     $sql = "DELETE FROM cart_items WHERE cart_item_id = ? AND user_id = ?";
     $stmt = $conn->prepare($sql);
     if ($stmt) {
-        $stmt->bind_param("ii", $delete_cart_item_id, $user_id);
+        $stmt->bind_param("ii", $cart_item_id, $user_id);
         if ($stmt->execute()) {
-            echo "<div class='notification success'>物品已从购物车中删除，请刷新</div>";
-        } else {
-            echo "<script>alert('删除购物车物品时出错: " . $stmt->error . "'); window.location.href='cart.php';</script>";
+            echo "success";
+            exit();
         }
     }
+    echo "error";
+    exit();
 }
 
 // 处理购买单个物品请求
@@ -112,49 +115,65 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>购物车 - 小农二手交易系统</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
-    <script>
-        function deleteCartItem(cartItemId) {
-            const formData = new FormData();
-            formData.append('delete_cart_item_id', cartItemId);
-
-            fetch('cart.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.text())
-            .then(data => {
-                document.querySelector('.container').innerHTML = data;
-            })
-            .catch(error => console.error('Error:', error));
-        }
-    </script>
+    <!-- 使用文本替代图标 -->
 </head>
 <body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="nav-links">
+                <a href="index.php" class="nav-link">首页</a>
+                <a href="my_items.php" class="nav-link">我的物品</a>
+                <a href="sell_item.php" class="nav-link">发布物品</a>
+                <a href="profile.php" class="nav-link">个人中心</a>
+                <a href="inbox.php" class="nav-link">收件箱</a>
+                <a href="logout.php" class="nav-link">退出</a>
+                <a href="cart.php" class="nav-link">购物车</a>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
-        <h1>购物车</h1>
+        <div class="card" style="margin-bottom: 2rem;">
+            <h2 style="margin-bottom: 0;">购物车</h2>
+        </div>
+
         <?php if ($result->num_rows > 0): ?>
             <?php while ($row = $result->fetch_assoc()): ?>
-                <div class="cart-item">
-                    <?php 
-                        echo !empty($row['image_url']) ? '<img src="' . htmlspecialchars($row['image_url']) . '" alt="Image" style="width: 150px; height: auto;">' : '<img src="uploads/no_image.png" alt="no_image" style="width: 150px; height: auto;">';
-                    ?>
-                    <div class="cart-item-info">
-                        <h3><?php echo htmlspecialchars($row['title']); ?></h3>
-                        <p>价格：<?php echo htmlspecialchars($row['price']); ?> 元</p>
-                        <p>数量：<?php echo htmlspecialchars($row['quantity']); ?></p>
+                <div class="card" style="margin-bottom: 1rem;" data-cart-item="<?php echo $row['cart_item_id']; ?>">
+                    <div style="display: flex; gap: 2rem; align-items: center;">
+                        <img src="<?php echo !empty($row['image_url']) ? htmlspecialchars($row['image_url']) : 'uploads/no_image.png'; ?>" 
+                             alt="商品图片" style="width: 120px; height: 120px; object-fit: cover; border-radius: var(--radius);">
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 0.5rem;"><?php echo htmlspecialchars($row['title']); ?></h3>
+                            <p class="item-price">¥<?php echo htmlspecialchars($row['price']); ?></p>
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <form id="delete_form_<?php echo $row['cart_item_id']; ?>" action="cart.php" method="post" style="margin: 0;">
+                                <input type="hidden" name="delete_cart_item_id" value="<?php echo $row['cart_item_id']; ?>">
+                                <button type="button" onclick="deleteCartItem(<?php echo $row['cart_item_id']; ?>)" class="btn btn-danger">
+                                    删除
+                                </button>
+                            </form>
+                            <form action="cart.php" method="post">
+                                <input type="hidden" name="purchase_cart_item_id" value="<?php echo $row['cart_item_id']; ?>">
+                                <button type="submit" name="purchase" class="btn btn-primary">
+                                    购买
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                    <button onclick="deleteCartItem(<?php echo $row['cart_item_id']; ?>)" class="delete-button">删除</button>
-                    <form action="cart.php" method="post" style="display:inline-block;">
-                        <input type="hidden" name="purchase_cart_item_id" value="<?php echo $row['cart_item_id']; ?>">
-                        <button type="submit" name="purchase" class="purchase-button">购买</button>
-                    </form>
                 </div>
             <?php endwhile; ?>
         <?php else: ?>
-            <p>您的购物车中没有商品。</p>
+            <div class="card" style="text-align: center; padding: 2rem;">
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">您的购物车是空的</p>
+                <a href="index.php" class="btn btn-primary">
+                    去逛逛
+                </a>
+            </div>
         <?php endif; ?>
-        <button onclick="window.location.href='index.php';" style="margin-top: 20px;">返回主页</button>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>

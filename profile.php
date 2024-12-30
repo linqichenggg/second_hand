@@ -89,56 +89,101 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>个人中心 - 小农二手交易系统</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="nav-links">
+                <a href="index.php" class="nav-link"><i class="fas fa-home"></i> 首页</a>
+                <a href="my_items.php" class="nav-link"><i class="fas fa-box"></i> 我的物品</a>
+                <a href="sell_item.php" class="nav-link"><i class="fas fa-plus"></i> 发布物品</a>
+                <a href="profile.php" class="nav-link"><i class="fas fa-user"></i> 个人中心</a>
+                <a href="inbox.php" class="nav-link"><i class="fas fa-envelope"></i> 收件箱</a>
+                <a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> 退出</a>
+                <a href="cart.php" class="nav-link"><i class="fas fa-shopping-cart"></i></a>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
-        <h1>个人中心</h1>
-        <form action="profile.php" method="post">
-            <div class="form-group">
-                <label for="username">用户名：</label>
-                <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($user['username']); ?>" required>
-            </div>
-            <div class="form-group">
-                <label for="student_id">学号：</label>
-                <input type="text" id="student_id" value="<?php echo htmlspecialchars($user['student_id']); ?>" disabled>
-            </div>
-            <div class="form-group">
-                <label for="phone_number">联系电话：</label>
-                <input type="text" id="phone_number" name="phone_number" value="<?php echo htmlspecialchars($user['phone_number']); ?>">
-            </div>
-            <button type="submit" name="update_profile">更新信息</button>
-        </form>
-        <form action="profile.php" method="post">
+        <div class="card" style="margin-bottom: 2rem;">
+            <h2>个人信息</h2>
+            <form action="profile.php" method="post">
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-user"></i> 用户名
+                    </label>
+                    <input type="text" name="username" class="form-input" 
+                           value="<?php echo htmlspecialchars($user['username'] ?? '默认用户名'); ?>" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-id-card"></i> 学号
+                    </label>
+                    <input type="text" value="<?php echo htmlspecialchars($user['student_id']); ?>" 
+                           class="form-input" disabled>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-phone"></i> 联系电话
+                    </label>
+                    <input type="tel" name="phone_number" class="form-input" 
+                           value="<?php echo htmlspecialchars($user['phone_number']); ?>">
+                </div>
+                <button type="submit" name="update_profile" class="btn btn-primary">
+                    <i class="fas fa-save"></i> 更新信息
+                </button>
+            </form>
+        </div>
+
+        <div class="card" style="margin-bottom: 2rem;">
             <h2>修改校区</h2>
-            <div class="form-group">
-                <label for="campus">校区：</label>
-                <select id="campus" name="campus" required>
-                    <option value="卫岗" <?php echo ($user['campus'] == '卫岗') ? 'selected' : ''; ?>>卫岗校区</option>
-                    <option value="滨江" <?php echo ($user['campus'] == '滨江') ? 'selected' : ''; ?>>滨江校区</option>
-                    <option value="浦口" <?php echo ($user['campus'] == '浦口') ? 'selected' : ''; ?>>浦口校区</option>
-                </select>
-            </div>
-            <button type="submit" name="update_campus">修改校区</button>
-        </form>
-        <hr>
-        <form action="profile.php" method="post">
-            <h2>更改密码</h2>
-            <div class="form-group">
-                <label for="current_password">当前密码：</label>
-                <input type="password" id="current_password" name="current_password" required>
-            </div>
-            <div class="form-group">
-                <label for="new_password">新密码：</label>
-                <input type="password" id="new_password" name="new_password" required>
-            </div>
-            <div class="form-group">
-                <label for="confirm_password">确认新密码：</label>
-                <input type="password" id="confirm_password" name="confirm_password" required>
-            </div>
-            <button type="submit" name="change_password">更改密码</button>
-        </form>
-        <a href="index.php" class="back-button">返回主页</a>
+            <form action="profile.php" method="post">
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-university"></i> 校区
+                    </label>
+                    <select name="campus" class="form-input" required>
+                        <option value="卫岗" <?php echo ($user['campus'] == '卫岗') ? 'selected' : ''; ?>>卫岗校区</option>
+                        <option value="滨江" <?php echo ($user['campus'] == '滨江') ? 'selected' : ''; ?>>滨江校区</option>
+                        <option value="浦口" <?php echo ($user['campus'] == '浦口') ? 'selected' : ''; ?>>浦口校区</option>
+                    </select>
+                </div>
+                <button type="submit" name="update_campus" class="btn btn-primary">
+                    <i class="fas fa-save"></i> 修改校区
+                </button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>修改密码</h2>
+            <form action="profile.php" method="post">
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-lock"></i> 当前密码
+                    </label>
+                    <input type="password" name="current_password" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-key"></i> 新密码
+                    </label>
+                    <input type="password" name="new_password" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-check"></i> 确认新密码
+                    </label>
+                    <input type="password" name="confirm_password" class="form-input" required>
+                </div>
+                <button type="submit" name="change_password" class="btn btn-primary">
+                    <i class="fas fa-save"></i> 修改密码
+                </button>
+            </form>
+        </div>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>

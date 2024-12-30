@@ -102,69 +102,75 @@ $conn->close();
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:">
     <title>登录 - 小农二手交易系统</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* 简单的样式调整 */
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f4f4f4;
-            margin: 0;
-        }
-        .container {
-            width: 400px;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .form-group {
-            text-align: left;
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .admin-button {
-            background-color: #f44336;
-            margin-top: 10px;
-        }
-        .admin-button:hover {
-            background-color: #d32f2f;
-        }
-        .back-button {
-            background-color: #2196F3;
-            margin-top: 10px;
-        }
-        .back-button:hover {
-            background-color: #1976D2;
-        }
-        /* 默认隐藏管理员登录表单 */
-        #admin-login-form {
-            display: none;
-        }
-    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card" style="max-width: 400px; margin: 2rem auto;">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h1 style="font-size: 1.5rem; margin-bottom: 0.5rem;">欢迎回来</h1>
+                <p style="color: var(--text-secondary);">登录您的小农账户</p>
+            </div>
+
+            <!-- 用户登录表单 -->
+            <form id="user-login-form" action="login.php" method="post">
+                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                <div class="form-group">
+                    <label class="form-label">
+                        用户名
+                    </label>
+                    <input type="text" name="username" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        密码
+                    </label>
+                    <input type="password" name="password" class="form-input" required>
+                </div>
+                <div style="display: grid; gap: 1rem;">
+                    <button type="submit" class="btn btn-primary">
+                        登录
+                    </button>
+                    <button type="button" onclick="window.location.href='register.php';" class="btn btn-secondary">
+                        注册
+                    </button>
+                    <button type="button" onclick="showAdminLogin();" class="btn" style="background: var(--warning);">
+                        管理员登录
+                    </button>
+                </div>
+            </form>
+
+            <!-- 管理员登录表单 -->
+            <form id="admin-login-form" action="login.php" method="post" style="display: none;">
+                <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+                <input type="hidden" name="login_type" value="admin">
+                <div class="form-group">
+                    <label class="form-label">
+                        管理员用户名
+                    </label>
+                    <input type="text" name="username" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        密码
+                    </label>
+                    <input type="password" name="password" class="form-input" required>
+                </div>
+                <div style="display: grid; gap: 1rem;">
+                    <button type="submit" class="btn btn-primary">
+                        管理员登录
+                    </button>
+                    <button type="button" onclick="showUserLogin();" class="btn btn-secondary">
+                        返回用户登录
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         function showAdminLogin() {
             document.getElementById('user-login-form').style.display = 'none';
@@ -176,40 +182,5 @@ $conn->close();
             document.getElementById('user-login-form').style.display = 'block';
         }
     </script>
-</head>
-<body>
-    <div class="container">
-        <h1>登录</h1>
-        <!-- 用户登录表单 -->
-        <form id="user-login-form" action="login.php" method="post">
-            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
-            <div class="form-group">
-                <label for="username">用户名：</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password">密码：</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit">登录</button>
-            <button type="button" onclick="window.location.href='register.php';" class="back-button">注册</button>
-            <button type="button" onclick="showAdminLogin();" class="admin-button">管理员登录</button>
-        </form>
-        <!-- 管理员登录表单 -->
-        <form id="admin-login-form" action="login.php" method="post">
-            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
-            <input type="hidden" name="login_type" value="admin">
-            <div class="form-group">
-                <label for="admin_username">管理员用户名：</label>
-                <input type="text" id="admin_username" name="username" required>
-            </div>
-            <div class="form-group">
-                <label for="admin_password">密码：</label>
-                <input type="password" id="admin_password" name="password" required>
-            </div>
-            <button type="submit">管理员登录</button>
-            <button type="button" onclick="showUserLogin();" class="back-button">返回用户登录</button>
-        </form>
-    </div>
 </body>
 </html>

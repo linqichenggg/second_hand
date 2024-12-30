@@ -6,6 +6,6 @@ session_start();
 // session_destroy();
 
 // 重定向到登录页面
-header("Location: index.php");
+header("Location: login.php");
 exit();
 ?>

@@ -10,203 +10,177 @@ error_reporting(E_ALL);
 require_once 'auth.php';
 require_once 'db_connect.php';
 
-
 // 检查用户是否为管理员
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     echo "<script>alert('您没有权限访问此页面'); window.location.href='login.php';</script>";
     exit();
 }
+
+// 查询所有用户
+$user_result = $conn->query("SELECT * FROM users");
+
+// 查询所有商品
+$item_result = $conn->query("SELECT * FROM items");
+
+// 查询所有订单
+$order_result = $conn->query("SELECT * FROM orders");
 ?>
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <title>管理员面板 - 小农二手交易系统</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* 简单的样式调整 */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #eef;
-            margin: 0;
-            padding: 0;
-        }
-        .navbar {
-            background-color: #333;
-            overflow: hidden;
-            padding: 14px 20px;
-        }
-        .navbar a {
-            float: left;
-            color: #f2f2f2;
-            text-align: center;
-            padding: 0 16px;
-            text-decoration: none;
-            font-size: 17px;
-        }
-        .navbar a:hover {
-            background-color: #ddd;
-            color: black;
-        }
-        .container {
-            padding: 20px;
-        }
-        .section {
-            margin-bottom: 40px;
-        }
-        h2 {
-            color: #333;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        table, th, td {
-            border: 1px solid #999;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
-        .action-buttons button {
-            margin-right: 5px;
-            padding: 5px 10px;
-            background-color: #f44336;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        .action-buttons button:hover {
-            background-color: #d32f2f;
-        }
-        .status-button {
-            background-color: #4CAF50;
-        }
-        .status-button:hover {
-            background-color: #45a049;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="navbar">
-        <a href="admin_dashboard.php">管理员面板</a>
-        <a href="logout.php">登出</a>
-    </div>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="nav-links">
+                <a href="admin_dashboard.php" class="nav-link"><i class="fas fa-tachometer-alt"></i> 控制台</a>
+                <a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> 退出</a>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
-        <h1>欢迎, 管理员!</h1>
-    <!-- <?php echo htmlspecialchars($_SESSION['username']); ?> -->
-        
-        <!-- 用户管理 -->
-        <div class="section">
-            <h2>用户管理</h2>
-            <?php
-            // 查询所有用户
-            $stmt = $conn->prepare("SELECT user_id, username, student_id, phone_number, campus FROM users");
-            $stmt->execute();
-            $result = $stmt->get_result();
-            ?>
-            <table>
-                <tr>
-                    <th>用户ID</th>
-                    <th>用户名</th>
-                    <th>学号</th>
-                    <th>电话</th>
-                    <th>校区</th>
-                    <th>操作</th>
-                </tr>
-                <?php while ($user = $result->fetch_assoc()): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($user['user_id']); ?></td>
-                    <td><?php echo htmlspecialchars($user['username']); ?></td>
-                    <td><?php echo htmlspecialchars($user['student_id']); ?></td>
-                    <td><?php echo htmlspecialchars($user['phone_number']); ?></td>
-                    <td><?php echo htmlspecialchars($user['campus']); ?></td>
-                    <td class="action-buttons">
-                        <!-- 这里可以添加更多管理功能，例如编辑用户信息 -->
-                        <a href="delete_user.php?user_id=<?php echo $user['user_id']; ?>"><button>删除用户</button></a>
-                    </td>
-                </tr>
-                <?php endwhile; ?>
-            </table>
+        <!-- 用户管理部分 -->
+        <div class="card" style="margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="margin: 0;"><i class="fas fa-users"></i> 用户管理</h2>
+                <span class="badge" style="background: var(--primary); color: white; padding: 0.5rem 1rem; border-radius: 20px;">
+                    总用户数：<?php echo $user_result->num_rows; ?>
+                </span>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: var(--background); text-align: left;">
+                            <th style="padding: 1rem;">用户ID</th>
+                            <th style="padding: 1rem;">用户名</th>
+                            <th style="padding: 1rem;">学号</th>
+                            <th style="padding: 1rem;">校区</th>
+                            <th style="padding: 1rem;">联系电话</th>
+                            <th style="padding: 1rem;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php while ($user = $user_result->fetch_assoc()): ?>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 1rem;"><?php echo htmlspecialchars($user['user_id']); ?></td>
+                                <td style="padding: 1rem;"><?php echo htmlspecialchars($user['username']); ?></td>
+                                <td style="padding: 1rem;"><?php echo htmlspecialchars($user['student_id']); ?></td>
+                                <td style="padding: 1rem;"><?php echo htmlspecialchars($user['campus']); ?></td>
+                                <td style="padding: 1rem;"><?php echo htmlspecialchars($user['phone_number']); ?></td>
+                                <td style="padding: 1rem;">
+                                    <a href="delete_user.php?user_id=<?php echo $user['user_id']; ?>" 
+                                       class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.9rem;"
+                                       onclick="return confirm('确定要删除此用户吗？');">
+                                        <i class="fas fa-trash"></i> 删除
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        
-        <!-- 商品管理 -->
-        <div class="section">
-            <h2>商品管理</h2>
-            <?php
-            // 查询所有商品
-            $stmt = $conn->prepare("SELECT item_id, user_id, title, price, category, item_condition, status FROM items");
-            $stmt->execute();
-            $result = $stmt->get_result();
-            ?>
-            <table>
-                <tr>
-                    <th>物品ID</th>
-                    <th>用户ID</th>
-                    <th>标题</th>
-                    <th>价格</th>
-                    <th>类别</th>
-                    <th>成色</th>
-                    <th>状态</th>
-                    <th>操作</th>
-                </tr>
-                <?php while ($item = $result->fetch_assoc()): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($item['item_id']); ?></td>
-                    <td><?php echo htmlspecialchars($item['user_id']); ?></td>
-                    <td><?php echo htmlspecialchars($item['title']); ?></td>
-                    <td><?php echo htmlspecialchars($item['price']); ?></td>
-                    <td><?php echo htmlspecialchars($item['category']); ?></td>
-                    <td><?php echo htmlspecialchars($item['item_condition']); ?></td>
-                    <td><?php echo htmlspecialchars($item['status']); ?></td>
-                    <td class="action-buttons">
-                        <?php if ($item['status'] === 'available'): ?>
-                            <a href="update_item_status.php?item_id=<?php echo $item['item_id']; ?>&status=sold"><button class="status-button">标记为已售出</button></a>
-                        <?php elseif ($item['status'] === 'sold'): ?>
-                            <a href="update_item_status.php?item_id=<?php echo $item['item_id']; ?>&status=available"><button class="status-button">标记为可用</button></a>
-                        <?php endif; ?>
-                        <a href="delete_item.php?item_id=<?php echo $item['item_id']; ?>"><button>删除商品</button></a>
-                    </td>
-                </tr>
-                <?php endwhile; ?>
-            </table>
+
+        <!-- 商品管理部分 -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="margin: 0;"><i class="fas fa-shopping-bag"></i> 商品管理</h2>
+                <span class="badge" style="background: var(--primary); color: white; padding: 0.5rem 1rem; border-radius: 20px;">
+                    总商品数：<?php echo $item_result->num_rows; ?>
+                </span>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: var(--background); text-align: left;">
+                            <th style="padding: 1rem;">商品ID</th>
+                            <th style="padding: 1rem;">发布者ID</th>
+                            <th style="padding: 1rem;">标题</th>
+                            <th style="padding: 1rem;">价格</th>
+                            <th style="padding: 1rem;">类别</th>
+                            <th style="padding: 1rem;">状态</th>
+                            <th style="padding: 1rem;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php while ($item = $item_result->fetch_assoc()): ?>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 1rem;"><?php echo htmlspecialchars($item['item_id']); ?></td>
+                                <td style="padding: 1rem;"><?php echo htmlspecialchars($item['user_id']); ?></td>
+                                <td style="padding: 1rem;"><?php echo htmlspecialchars($item['title']); ?></td>
+                                <td style="padding: 1rem;">¥<?php echo htmlspecialchars($item['price']); ?></td>
+                                <td style="padding: 1rem;"><?php echo htmlspecialchars($item['category']); ?></td>
+                                <td style="padding: 1rem;">
+                                    <span class="badge" style="background: <?php echo $item['status'] == 'available' ? 'var(--success)' : 'var(--secondary)'; ?>; color: white; padding: 0.25rem 0.5rem; border-radius: 20px; font-size: 0.8rem;">
+                                        <?php echo $item['status'] == 'available' ? '在售' : '已售'; ?>
+                                    </span>
+                                </td>
+                                <td style="padding: 1rem;">
+                                    <a href="delete_item.php?item_id=<?php echo $item['item_id']; ?>" 
+                                       class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.9rem;"
+                                       onclick="return confirm('确定要删除此商品吗？');">
+                                        <i class="fas fa-trash"></i> 删除
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        
-        <!-- 其他管理功能可以在此添加 -->
-         <!-- 订单管理 -->
-        <div class="section">
-            <h2>订单管理</h2>
-            <?php
-            // 查询所有订单
-            $stmt = $conn->prepare("SELECT order_id, buyer_id, item_id, order_date, status FROM orders");
-            $stmt->execute();
-            $result = $stmt->get_result();
-            ?>
-            <table>
-                <tr>
-                    <th>订单ID</th>
-                    <th>买家ID</th>
-                    <th>商品ID</th>
-                    <th>订单日期</th>
-                    <th>状态</th>
-                    <th>操作</th>
-                </tr>
-                <?php while ($order = $result->fetch_assoc()): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($order['order_id']); ?></td>
-                    <td><?php echo htmlspecialchars($order['buyer_id']); ?></td>
-                    <td><?php echo htmlspecialchars($order['item_id']); ?></td>
-                    <td><?php echo htmlspecialchars($order['order_date']); ?></td>
-                    <td><?php echo htmlspecialchars($order['status']); ?></td>
-                    <td class="action-buttons">
-                        <a href="delete_order.php?order_id=<?php echo $order['order_id']; ?>"><button>删除订单</button></a>
-                    </td>
-                </tr>
-                <?php endwhile; ?>
-            </table>
+
+        <!-- 订单管理部分 -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="margin: 0;"><i class="fas fa-shopping-cart"></i> 订单管理</h2>
+                <span class="badge" style="background: var(--primary); color: white; padding: 0.5rem 1rem; border-radius: 20px;">
+                    总订单数：<?php echo $order_result->num_rows; ?>
+                </span>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: var(--background); text-align: left;">
+                            <th style="padding: 1rem;">订单ID</th>
+                            <th style="padding: 1rem;">买家ID</th>
+                            <th style="padding: 1rem;">商品ID</th>
+                            <th style="padding: 1rem;">订单日期</th>
+                            <th style="padding: 1rem;">状态</th>
+                            <th style="padding: 1rem;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php while ($order = $order_result->fetch_assoc()): ?>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td><?php echo htmlspecialchars($user['user_id'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($user['username'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($user['student_id'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($user['phone_number'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($user['campus'] ?? ''); ?></td>
+                                <td style="padding: 1rem;">
+                                    <a href="delete_order.php?order_id=<?php echo $order['order_id']; ?>" 
+                                       class="btn btn-danger" style="padding: 0.5rem 1rem; font-size: 0.9rem;"
+                                       onclick="return confirm('确定要删除此订单吗？');">
+                                        <i class="fas fa-trash"></i> 删除
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endwhile; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>

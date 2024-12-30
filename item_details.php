@@ -67,46 +67,63 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>物品详情 - 小农二手交易系统</title>
+    <title>商品详情 - 小农二手交易系统</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
-    <style>
-        .seller-score {
-            position: absolute;
-            top: 30px;
-            right: 320px;
-            background-color: #000;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-            font-size: 16px;
-            color:white
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <h1>物品详情</h1>
-
-        <div class="seller-score">
-            卖家评分：<?php echo htmlspecialchars($seller_score); ?>
-        </div>
-
-        <div class="item-details">
-            <img src="uploads/no_image.png" alt="no_image" style="width: 150px; height: auto;">
-            <div class="item-info">
-                <h2><?php echo htmlspecialchars($item['title']); ?></h2>
-                <p>价格：¥<?php echo htmlspecialchars($item['price']); ?></p>
-                <p>描述：<?php echo htmlspecialchars($item['description']); ?></p>
-                <p>成色：<?php echo htmlspecialchars($item['item_condition']); ?></p>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="nav-links">
+                <a href="index.php" class="nav-link"><i class="fas fa-home"></i> 首页</a>
+                <a href="my_items.php" class="nav-link"><i class="fas fa-box"></i> 我的物品</a>
+                <a href="sell_item.php" class="nav-link"><i class="fas fa-plus"></i> 发布物品</a>
+                <a href="profile.php" class="nav-link"><i class="fas fa-user"></i> 个人中心</a>
+                <a href="inbox.php" class="nav-link"><i class="fas fa-envelope"></i> 收件箱</a>
+                <a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> 退出</a>
+                <a href="cart.php" class="nav-link"><i class="fas fa-shopping-cart"></i></a>
             </div>
-            <?php if ($item['user_id'] != $user_id): ?>
-                <form action="item_details.php?item_id=<?php echo $item_id; ?>" method="post">
-                    <button type="submit" name="add_to_cart">添加到购物车</button>
-                </form>
-            <?php endif; ?>
-            <button onclick="window.location.href='index.php';" style="margin-top: 10px;">返回主页</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div>
+                    <img src="<?php echo !empty($item['image_url']) ? htmlspecialchars($item['image_url']) : 'uploads/no_image.png'; ?>" 
+                         alt="商品图片" style="width: 100%; border-radius: var(--radius); margin-bottom: 1rem;">
+                    <div style="background: var(--success); color: white; padding: 0.5rem; border-radius: var(--radius); text-align: center;">
+                        卖家评分：<?php echo htmlspecialchars($seller_score); ?>
+                    </div>
+                </div>
+                
+                <div>
+                    <h2 style="font-size: 1.5rem; margin-bottom: 1rem;"><?php echo htmlspecialchars($item['title']); ?></h2>
+                    <p class="item-price" style="font-size: 1.8rem; margin-bottom: 1.5rem;">
+                        ¥<?php echo htmlspecialchars($item['price']); ?>
+                    </p>
+                    <div style="margin-bottom: 1.5rem;">
+                        <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;">商品描述：</h3>
+                        <p style="color: var(--text-secondary);"><?php echo nl2br(htmlspecialchars($item['description'])); ?></p>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;">商品成色：</h3>
+                        <p style="color: var(--text-secondary);"><?php echo htmlspecialchars($item['item_condition']); ?></p>
+                    </div>
+                    
+                    <div style="display: grid; gap: 1rem;">
+                        <button onclick="addToCart(<?php echo $item['item_id']; ?>)" class="btn btn-primary">
+                            <i class="fas fa-cart-plus"></i> 添加到购物车
+                        </button>
+                        <a href="index.php" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> 返回主页
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>

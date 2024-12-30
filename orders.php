@@ -150,6 +150,136 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的订单 - 小农二手交易系统</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* 基础设置 */
+        :root {
+            --primary: #4CAF50;        /* 主要绿色 */
+            --primary-dark: #388E3C;   /* 深绿色 */
+            --secondary: #81C784;      /* 浅绿色 */
+            --secondary-dark: #66BB6A; /* 中绿色 */
+            --success: #43A047;        /* 成功绿色 */
+            --danger: #e57373;         /* 柔和的红色 */
+            --warning: #FFB74D;        /* 温和的橙色 */
+            --info: #4DB6AC;          /* 青绿色 */
+            --background: #F1F8E9;     /* 浅绿背景 */
+            --surface: #ffffff;        /* 保持白色 */
+            --text: #212529;
+            --text-secondary: #558B2F; /* 深绿色文字 */
+            --border: #dee2e6;
+            --radius: 0.5rem;
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 全局重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background-color: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--text);
+        }
+
+        .order {
+            background-color: var(--surface);
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .order h3 {
+            color: var(--text);
+            font-size: 1.25rem;
+        }
+
+        .order p {
+            color: var(--text-secondary);
+            margin: 0.5rem 0;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .delete-button {
+            background-color: var(--danger);
+        }
+
+        .delete-button:hover {
+            background-color: #d32f2f;
+        }
+
+        .rate-button {
+            background-color: var(--info);
+        }
+
+        .rate-button:hover {
+            background-color: #00796b;
+        }
+
+        .message-button {
+            background-color: var(--secondary);
+        }
+
+        .message-button:hover {
+            background-color: #66bb6a;
+        }
+
+        .confirm-delivery-button {
+            background-color: var(--success);
+        }
+
+        .confirm-delivery-button:hover {
+            background-color: #388e3c;
+        }
+
+        .toggle-btn {
+            background-color: var(--primary-dark);
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+        }
+
+        .toggle-btn:hover {
+            background-color: var(--primary);
+        }
+
+        .shuttle-info {
+            margin-bottom: 2rem;
+        }
+    </style>
 </head>
 <body>
     <div class="container">

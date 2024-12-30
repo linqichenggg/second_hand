@@ -52,57 +52,59 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的物品 - 小农二手交易系统</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
-    <style>
-        .item-card {
-            border: 1px solid #ddd;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .item-card img {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 4px;
-        }
-        .item-info {
-            flex-grow: 1;
-            margin-left: 20px;
-        }
-        button {
-            background-color: #f44336;
-        }
-        button:hover {
-            background-color: #e53935;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="nav-links">
+                <a href="index.php" class="nav-link"><i class="fas fa-home"></i> 首页</a>
+                <a href="my_items.php" class="nav-link"><i class="fas fa-box"></i> 我的物品</a>
+                <a href="sell_item.php" class="nav-link"><i class="fas fa-plus"></i> 发布物品</a>
+                <a href="profile.php" class="nav-link"><i class="fas fa-user"></i> 个人中心</a>
+                <a href="inbox.php" class="nav-link"><i class="fas fa-envelope"></i> 收件箱</a>
+                <a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> 退出</a>
+                <a href="cart.php" class="nav-link"><i class="fas fa-shopping-cart"></i></a>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
-        <h1>我的物品</h1>
-        <?php if ($result->num_rows > 0): ?>
-            <?php while ($row = $result->fetch_assoc()): ?>
-                <div class="item-card">
-                    <img src="<?php echo htmlspecialchars($row['image_url']); ?>" alt="<?php echo htmlspecialchars($row['title']); ?>">
-                    <div class="item-info">
-                        <h3><?php echo htmlspecialchars($row['title']); ?></h3>
-                        <p>价格：¥<?php echo htmlspecialchars($row['price']); ?></p>
-                        <p>状态：<?php echo htmlspecialchars($row['status']); ?></p>
+        <div class="card" style="margin-bottom: 2rem;">
+            <h2 style="margin-bottom: 0;">我的物品</h2>
+        </div>
+
+        <div class="grid">
+            <?php if ($result->num_rows > 0): ?>
+                <?php while ($row = $result->fetch_assoc()): ?>
+                    <div class="item-card">
+                        <img src="<?php echo htmlspecialchars($row['image_url']); ?>" 
+                             alt="商品图片" class="item-image">
+                        <div class="item-content">
+                            <h3 class="item-title"><?php echo htmlspecialchars($row['title']); ?></h3>
+                            <p class="item-price">¥<?php echo htmlspecialchars($row['price']); ?></p>
+                            <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                                <form action="my_items.php" method="post" style="flex: 1;">
+                                    <input type="hidden" name="delete_item_id" value="<?php echo $row['item_id']; ?>">
+                                    <button type="submit" class="btn btn-danger" style="width: 100%;">
+                                        <i class="fas fa-trash"></i> 删除
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                    <form action="my_items.php" method="post">
-                        <input type="hidden" name="delete_item_id" value="<?php echo $row['item_id']; ?>">
-                        <button type="submit">删除</button>
-                    </form>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <div class="card" style="grid-column: 1/-1; text-align: center; padding: 2rem;">
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">您还没有发布任何物品</p>
+                    <a href="sell_item.php" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> 发布物品
+                    </a>
                 </div>
-            <?php endwhile; ?>
-        <?php else: ?>
-            <p>您还没有发布任何物品。</p>
-        <?php endif; ?>
-        <a href="index.php" class="back-button">返回主页</a>
+            <?php endif; ?>
+        </div>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
