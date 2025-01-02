@@ -137,6 +137,28 @@ $order_result = $conn->query("SELECT * FROM orders");
             </div>
         </div>
 
+         <!-- 收件箱管理部分 -->
+         <div class="card">
+            <h2><i class="fas fa-envelope"></i> 收件箱管理</h2>
+            <?php if ($inbox_result->num_rows > 0): ?>
+                <?php while ($message = $inbox_result->fetch_assoc()): ?>
+                    <div class="message">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong><?php echo htmlspecialchars($message['sender_name']); ?></strong>
+                                <p><?php echo htmlspecialchars($message['subject']); ?></p>
+                            </div>
+                            <div><?php echo htmlspecialchars($message['timestamp']); ?></div>
+                        </div>
+                        <p><?php echo nl2br(htmlspecialchars($message['content'])); ?></p>
+                    </div>
+                    <hr>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <p>没有收到任何消息。</p>
+            <?php endif; ?>
+        </div>
+
         <!-- 订单管理部分 -->
         <div class="card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
